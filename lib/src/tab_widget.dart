@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:tabbed_view/src/draggable_config.dart';
 import 'package:tabbed_view/src/draggable_data.dart';
 import 'package:tabbed_view/src/flow_layout.dart';
@@ -13,6 +12,8 @@ import 'package:tabbed_view/src/theme/tab_status_theme_data.dart';
 import 'package:tabbed_view/src/theme/tab_theme_data.dart';
 import 'package:tabbed_view/src/theme/tabbed_view_theme_data.dart';
 import 'package:tabbed_view/src/theme/theme_widget.dart';
+import 'package:fluent_ui/fluent_ui.dart' show Tooltip, TooltipThemeData;
+import 'package:flutter/material.dart' hide Tooltip, TooltipThemeData;
 
 /// Listener for the tabs with the mouse over.
 typedef UpdateHighlightedIndex = void Function(int? tabIndex);
@@ -78,22 +79,25 @@ class TabWidget extends StatelessWidget {
             decoration: BoxDecoration(
                 border:
                     Border(top: innerTopBorder, bottom: innerBottomBorder))),
-        decoration: decoration,
-        margin: margin);
+        decoration: decoration);
 
     MouseCursor cursor = MouseCursor.defer;
-    if (provider.draggingTabIndex == null && status == TabStatus.selected) {
-      cursor = SystemMouseCursors.click;
-    }
 
-    tabWidget = MouseRegion(
-        cursor: cursor,
-        onEnter: (event) => updateHighlightedIndex(index),
-        onExit: (event) => updateHighlightedIndex(null),
-        child: provider.draggingTabIndex == null
-            ? GestureDetector(
-                onTap: () => _onSelect(context, index), child: tabWidget)
-            : tabWidget);
+    tabWidget = Tooltip(
+      message: tab.text,
+      style: const TooltipThemeData(
+        waitDuration: Duration(milliseconds: 700),
+        preferBelow: true,
+      ),
+      child: MouseRegion(
+          cursor: cursor,
+          onEnter: (event) => updateHighlightedIndex(index),
+          onExit: (event) => updateHighlightedIndex(null),
+          child: provider.draggingTabIndex == null
+              ? GestureDetector(
+                  onTap: () => _onSelect(context, index), child: tabWidget)
+              : tabWidget),
+    );
 
     if (tab.draggable) {
       DraggableConfig draggableConfig = DraggableConfig.defaultConfig;
@@ -109,7 +113,10 @@ class TabWidget extends StatelessWidget {
 
         tabWidget = Draggable<DraggableData>(
             child: tabWidget,
-            feedback: Material(child: feedback),
+            feedback: Material(
+              color: Colors.transparent,
+              child: feedback,
+            ),
             data: DraggableData(provider.controller, tab),
             feedbackOffset: draggableConfig.feedbackOffset,
             dragAnchorStrategy: draggableConfig.dragAnchorStrategy,
@@ -149,6 +156,10 @@ class TabWidget extends StatelessWidget {
                 : tabTheme.draggingOpacity);
       }
     }
+
+    // apply margin outside Draggable so transparent margin area
+    // does not capture drag events
+    tabWidget = Padding(padding: margin ?? EdgeInsets.zero, child: tabWidget);
 
     if (provider.controller.reorderEnable &&
         provider.draggingTabIndex != tab.index) {
@@ -204,17 +215,22 @@ class TabWidget extends StatelessWidget {
       padding = EdgeInsets.only(right: tabTheme.buttonsOffset);
     }
 
+    Widget textWidget = Container(
+        child:
+            Text(tab.text, style: textStyle, overflow: TextOverflow.ellipsis),
+        padding: padding);
+
     if (tab.leading != null) {
       Widget? leading = tab.leading!(context, status);
       if (leading != null) {
-        textAndButtons.add(leading);
+        textWidget = Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [leading, Flexible(child: textWidget)],
+        );
       }
     }
 
-    textAndButtons.add(Container(
-        child:
-            Text(tab.text, style: textStyle, overflow: TextOverflow.ellipsis),
-        padding: padding));
+    textAndButtons.add(textWidget);
 
     if (hasButtons) {
       for (int i = 0; i < tab.buttons!.length; i++) {
@@ -241,31 +257,30 @@ class TabWidget extends StatelessWidget {
             padding: padding));
       }
     }
-    if (tab.closable) {
-      EdgeInsets? padding;
-      if (hasButtons && tabTheme.buttonsGap > 0) {
-        padding = EdgeInsets.only(left: tabTheme.buttonsGap);
-      }
-      TabButton closeButton = TabButton(
-          icon: tabTheme.closeIcon,
-          onPressed: () => _onClose(context, index),
-          toolTip: provider.closeButtonTooltip);
 
-      textAndButtons.add(Container(
-          child: TabButtonWidget(
-              provider: provider,
-              button: closeButton,
-              enabled: buttonsEnabled,
-              normalColor: normalColor,
-              hoverColor: hoverColor,
-              disabledColor: disabledColor,
-              normalBackground: normalBackground,
-              hoverBackground: hoverBackground,
-              disabledBackground: disabledBackground,
-              iconSize: tabTheme.buttonIconSize,
-              themePadding: tabTheme.buttonPadding),
-          padding: padding));
+    // always render close slot — visible only when closable
+    EdgeInsets? closePadding;
+    if (hasButtons && tabTheme.buttonsGap > 0) {
+      closePadding = EdgeInsets.only(left: tabTheme.buttonsGap);
     }
+    TabButton closeButton = TabButton(
+        icon: tabTheme.closeIcon,
+        onPressed: tab.closable ? () => _onClose(context, index) : null,
+        toolTip: tab.closable ? provider.closeButtonTooltip : null);
+    textAndButtons.add(Container(
+        child: TabButtonWidget(
+            provider: provider,
+            button: closeButton,
+            enabled: buttonsEnabled && tab.closable,
+            normalColor: normalColor,
+            hoverColor: hoverColor,
+            disabledColor: disabledColor,
+            normalBackground: normalBackground,
+            hoverBackground: hoverBackground,
+            disabledBackground: disabledBackground,
+            iconSize: tabTheme.buttonIconSize,
+            themePadding: tabTheme.buttonPadding),
+        padding: closePadding));
 
     return textAndButtons;
   }

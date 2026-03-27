@@ -27,6 +27,7 @@ class TabbedViewController extends ChangeNotifier {
   }
 
   final List<TabData> _tabs;
+
   UnmodifiableListView<TabData> get tabs => UnmodifiableListView(_tabs);
 
   final dynamic data;
@@ -36,7 +37,9 @@ class TabbedViewController extends ChangeNotifier {
   final OnReorder? onReorder;
 
   bool _reorderEnable;
+
   bool get reorderEnable => _reorderEnable;
+
   set reorderEnable(bool value) {
     if (_reorderEnable != value) {
       _reorderEnable = value;
@@ -168,7 +171,8 @@ class TabbedViewController extends ChangeNotifier {
       _selectedIndex = null;
     } else if (_selectedIndex != null &&
         (_selectedIndex == tabIndex || _selectedIndex! >= _tabs.length)) {
-      _selectedIndex = 0;
+      // select nearest left tab, fall back to right if no left exists
+      _selectedIndex = (tabIndex > 0 ? tabIndex - 1 : 0);
     }
     notifyListeners();
     return tabData;

@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:tabbed_view/src/content_area.dart';
 import 'package:tabbed_view/src/internal/tabbed_view_provider.dart';
@@ -53,7 +54,8 @@ class TabbedView extends StatefulWidget {
       this.tabsAreaVisible,
       this.onDraggableBuild,
       this.canDrop,
-      this.onBeforeDropAccept});
+      this.onBeforeDropAccept,
+      this.anyDragActive});
 
   final TabbedViewController controller;
   final bool contentClip;
@@ -69,6 +71,7 @@ class TabbedView extends StatefulWidget {
   final OnDraggableBuild? onDraggableBuild;
   final CanDrop? canDrop;
   final OnBeforeDropAccept? onBeforeDropAccept;
+  final ValueListenable<bool>? anyDragActive;
 
   @override
   State<StatefulWidget> createState() => _TabbedViewState();
@@ -118,13 +121,15 @@ class _TabbedViewState extends State<TabbedView> {
         onTabDrag: _onTabDrag,
         draggingTabIndex: _draggingTabIndex,
         canDrop: widget.canDrop,
-        onBeforeDropAccept: widget.onBeforeDropAccept);
+        onBeforeDropAccept: widget.onBeforeDropAccept,
+        anyDragActive: widget.anyDragActive);
 
     final bool tabsAreaVisible =
         widget.tabsAreaVisible ?? theme.tabsArea.visible;
     List<LayoutId> children = [];
     if (tabsAreaVisible) {
-      Widget tabArea = TabsArea(provider: provider);
+      Widget tabArea =
+          TabsArea(key: ValueKey(widget.controller), provider: provider);
       children.add(LayoutId(id: 1, child: tabArea));
     }
     ContentArea contentArea =

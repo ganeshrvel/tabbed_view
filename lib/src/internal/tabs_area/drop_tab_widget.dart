@@ -108,17 +108,52 @@ class _CustomPainter extends CustomPainter {
 
   final Color dropColor;
 
+  static const _stripW = 6.0;
+  static const _dash = 4.0;
+  static const _gap = 3.0;
+  static const _padV = 6.0;
+  static const _radius = 3.0;
+
   @override
   void paint(Canvas canvas, Size size) {
-    Paint paint = Paint()
-      ..color = dropColor
-      ..style = PaintingStyle.fill;
-    canvas.drawRect(
-        Rect.fromLTWH(0, 0, DropTabWidget.dropWidth, size.height), paint);
+    final top = _padV;
+    final bottom = size.height - _padV;
+    final left = 0.0;
+    final right = left + _stripW;
+
+    final rRect = RRect.fromLTRBR(
+        left, top, right, bottom, const Radius.circular(_radius));
+
+    canvas.drawRRect(
+      rRect,
+      Paint()
+        ..color = dropColor.withValues(alpha: 0.15)
+        ..style = PaintingStyle.fill,
+    );
+
+    final borderPaint = Paint()
+      ..color = dropColor.withValues(alpha: 0.9)
+      ..strokeWidth = 1.5
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
+    final path = Path()..addRRect(rRect);
+    final metrics = path.computeMetrics();
+    for (final metric in metrics) {
+      double distance = 0;
+      bool draw = true;
+      while (distance < metric.length) {
+        final len = draw ? _dash : _gap;
+        final end = (distance + len).clamp(0.0, metric.length);
+        if (draw) {
+          canvas.drawPath(metric.extractPath(distance, end), borderPaint);
+        }
+        distance = end;
+        draw = !draw;
+      }
+    }
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
-  }
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }

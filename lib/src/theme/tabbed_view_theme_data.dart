@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tabbed_view/src/icon_provider.dart';
 import 'package:tabbed_view/src/theme/content_area_theme_data.dart';
@@ -30,8 +31,8 @@ class TabbedViewThemeData {
 
   /// Sets the Material Design icons.
   void materialDesignIcons() {
-    this.tabsArea.menuIcon = IconProvider.data(Icons.arrow_drop_down);
-    this.tab.closeIcon = IconProvider.data(Icons.close);
+    this.tabsArea.menuIcon = IconProvider.data(CupertinoIcons.chevron_down);
+    this.tab.closeIcon = IconProvider.data(CupertinoIcons.xmark);
   }
 
   /// Builds the predefined dark theme.

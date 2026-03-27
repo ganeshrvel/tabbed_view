@@ -109,4 +109,5 @@ class TabData extends ChangeNotifier with TabIndex {
   }
 
   final UniqueKey uniqueKey = UniqueKey();
+  final GlobalKey scrollKey = GlobalKey();
 }

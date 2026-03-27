@@ -10,8 +10,8 @@ import 'package:tabbed_view/src/theme/tabbed_view_theme_data.dart';
 import 'package:tabbed_view/src/theme/tabs_area_theme_data.dart';
 
 /// Inner widget for [TabsArea] layout.
-/// Displays the popup menu button for tabs hidden due to lack of space.
-/// The selected [TabWidget] will always be visible.
+/// Displays all tabs without hiding — overflow handled by parent scroll view.
+/// The selected [TabWidget] will always be visible via scroll.
 class TabsAreaLayout extends MultiChildRenderObjectWidget {
   TabsAreaLayout(
       {Key? key,
@@ -79,8 +79,6 @@ class _TabsAreaLayoutRenderBox extends RenderBox
 
   int? get selectedTabIndex => _selectedTabIndex;
 
-  late RenderBox _corner;
-
   set selectedTabIndex(int? value) {
     if (_selectedTabIndex != value) {
       _selectedTabIndex = value;
@@ -118,24 +116,22 @@ class _TabsAreaLayoutRenderBox extends RenderBox
 
   @override
   void performLayout() {
-    final BoxConstraints childConstraints =
-        BoxConstraints.loose(Size(double.infinity, constraints.maxHeight));
+    final BoxConstraints childConstraints = _tabsAreaTheme.tabWidth != null
+        ? BoxConstraints(
+            minWidth: _tabsAreaTheme.tabWidth!,
+            maxWidth: _tabsAreaTheme.tabWidth!,
+            minHeight: 0,
+            maxHeight: constraints.maxHeight)
+        : BoxConstraints.loose(Size(double.infinity, constraints.maxHeight));
 
     List<RenderBox> children = [];
     visitChildren((child) {
       children.add(child as RenderBox);
     });
 
-    // There will always be at least 1 child (corner area).
-    _corner = children.removeLast();
-
     // Defines the biggest height to avoid displacement of tabs when
     // changing visibility.
     double height = 0;
-
-    _corner.layout(childConstraints, parentUsesSize: true);
-    final double minCornerAreaWidth = _corner.size.width;
-    height = math.max(height, _corner.size.height);
 
     // layout all (tabs + tabs area buttons)
     VisibleTabs visibleTabs = VisibleTabs(tabsAreaTheme);
@@ -157,63 +153,20 @@ class _TabsAreaLayoutRenderBox extends RenderBox
       height = math.max(height, tabsAreaTheme.gapBottomBorder.width);
     }
 
-    double availableWidth = math.max(
-        constraints.maxWidth - tabsAreaTheme.initialGap - _corner.size.width,
-        0);
-
-    visibleTabs.layoutSingleTab(
-        constraints.maxWidth, height, _corner.size.width);
-
-    List<int> hiddenIndexes = [];
-
-    while (visibleTabs.length > 0 &&
-        visibleTabs.requiredTotalWidth() > availableWidth) {
-      int? removedIndex;
-      if (visibleTabs.length == 1) {
-        visibleTabs.removeFirst();
-        removedIndex = 0;
-      } else {
-        removedIndex = visibleTabs.removeLastNonSelected();
-      }
-      if (removedIndex != null) {
-        hiddenIndexes.add(removedIndex);
-      }
-      visibleTabs.layoutSingleTab(
-          constraints.maxWidth, height, _corner.size.width);
-    }
-
-    hiddenTabs.update(hiddenIndexes);
+    // all tabs always visible — no hiding, parent scroll view handles overflow
+    hiddenTabs.update([]);
 
     visibleTabs.updateOffsets();
 
-    _corner.layout(
-        BoxConstraints.tightFor(
-            width: math.max(
-                constraints.maxWidth - visibleTabs.maxX(), minCornerAreaWidth),
-            height: height),
-        parentUsesSize: true);
-
-    List<RenderBox> visibleChildren = [];
+    // mark all tabs visible
     for (int i = 0; i < visibleTabs.length; i++) {
-      RenderBox tab = visibleTabs.get(i);
-      final TabsAreaLayoutParentData tabParentData =
-          tab.tabsAreaLayoutParentData();
-      tabParentData.visible = true;
-      visibleChildren.add(tab);
+      visibleTabs.get(i).tabsAreaLayoutParentData().visible = true;
     }
-
-    final TabsAreaLayoutParentData cornerParentData =
-        _corner.tabsAreaLayoutParentData();
-    // anchoring corner to the right
-    cornerParentData.offset = Offset(constraints.maxWidth - _corner.size.width,
-        constraints.maxHeight - _corner.size.height);
-
-    cornerParentData.visible = true;
-    visibleChildren.add(_corner);
 
     if (tabsAreaTheme.equalHeights == EqualHeights.none) {
       // Aligning and fix max height on visible children.
-      for (RenderBox tab in visibleChildren) {
+      for (int i = 0; i < visibleTabs.length; i++) {
+        final RenderBox tab = visibleTabs.get(i);
         final TabsAreaLayoutParentData parentData =
             tab.tabsAreaLayoutParentData();
         tab.layout(
@@ -227,14 +180,10 @@ class _TabsAreaLayoutRenderBox extends RenderBox
             Offset(parentData.offset.dx, height - tab.size.height);
       }
     } else {
-      if (tabsAreaTheme.equalHeights == EqualHeights.tabs) {
-        int visibleCount = visibleChildren.length;
-        if (hiddenTabs.hasHiddenTabs) {
-          // ignoring corner
-          visibleCount--;
-        }
-        for (int i = 0; i < visibleCount; i++) {
-          RenderBox tab = visibleChildren[i];
+      if (tabsAreaTheme.equalHeights == EqualHeights.tabs ||
+          tabsAreaTheme.equalHeights == EqualHeights.all) {
+        for (int i = 0; i < visibleTabs.length; i++) {
+          final RenderBox tab = visibleTabs.get(i);
           tab.layout(
               BoxConstraints.tightFor(width: tab.size.width, height: height),
               parentUsesSize: true);
@@ -242,27 +191,12 @@ class _TabsAreaLayoutRenderBox extends RenderBox
               tab.tabsAreaLayoutParentData();
           parentData.offset = Offset(parentData.offset.dx, 0);
         }
-        if (hiddenTabs.hasHiddenTabs) {
-          RenderBox corner = visibleChildren.last;
-          final TabsAreaLayoutParentData parentData =
-              corner.tabsAreaLayoutParentData();
-          parentData.offset =
-              Offset(parentData.offset.dx, height - corner.size.height);
-        }
-      } else if (tabsAreaTheme.equalHeights == EqualHeights.all) {
-        for (RenderBox child in visibleChildren) {
-          child.layout(
-              BoxConstraints.tightFor(width: child.size.width, height: height),
-              parentUsesSize: true);
-
-          final TabsAreaLayoutParentData parentData =
-              child.tabsAreaLayoutParentData();
-          parentData.offset = Offset(parentData.offset.dx, 0);
-        }
       }
     }
 
-    size = constraints.constrain(Size(constraints.maxWidth, height));
+    // report natural full width so SingleChildScrollView can scroll
+    size = constraints.constrain(
+        Size(math.max(visibleTabs.maxX(), constraints.minWidth), height));
   }
 
   void visitVisibleChildren(RenderObjectVisitor visitor) {
@@ -286,17 +220,13 @@ class _TabsAreaLayoutRenderBox extends RenderBox
     visitVisibleChildren((RenderObject child) {
       final TabsAreaLayoutParentData childParentData =
           child.tabsAreaLayoutParentData();
-      if (child != _corner) {
-        if (childParentData.selected) {
-          selectedTab = child as RenderBox;
-          selectedTabParentData = childParentData;
-        } else {
-          context.paintChild(child, childParentData.offset + offset);
-        }
-        visibleTabs.add(child as RenderBox);
+      if (childParentData.selected) {
+        selectedTab = child as RenderBox;
+        selectedTabParentData = childParentData;
       } else {
         context.paintChild(child, childParentData.offset + offset);
       }
+      visibleTabs.add(child as RenderBox);
     });
     if (selectedTab != null) {
       context.paintChild(selectedTab!, selectedTabParentData!.offset + offset);
@@ -354,9 +284,6 @@ class _TabsAreaLayoutRenderBox extends RenderBox
       }
 
       double lastGapWidth = offset.dx + size.width - lastX;
-      if (_corner.tabsAreaLayoutParentData().visible) {
-        // lastGapWidth -= _corner.size.width;
-      }
       if (lastGapWidth > 0) {
         canvas.drawRect(
             Rect.fromLTWH(lastX, topGap, lastGapWidth,

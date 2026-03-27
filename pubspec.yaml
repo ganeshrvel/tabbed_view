@@ -18,6 +18,12 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^5.0.0
 
+  fluent_ui:
+    git:
+      url: https://github.com/ganeshrvel/fluent_ui.git
+      ref: openmtp
+
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

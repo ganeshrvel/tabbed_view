@@ -126,10 +126,14 @@ class _FlowLayoutRenderBox extends RenderBox
         }
       }
     } else {
-      if (firstChildFlex && firstWidth + otherWidths > constraints.maxWidth) {
+      if (firstChildFlex &&
+          (firstWidth + otherWidths > constraints.maxWidth ||
+              constraints.minWidth > 0)) {
         children[0].layout(
             BoxConstraints(
-                minWidth: 0,
+                minWidth: constraints.hasTightWidth
+                    ? constraints.maxWidth - otherWidths
+                    : 0,
                 maxWidth: constraints.maxWidth - otherWidths,
                 minHeight: biggestChildHeight,
                 maxHeight: biggestChildHeight),

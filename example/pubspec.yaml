@@ -26,6 +26,11 @@ dependencies:
   tabbed_view:
     path: ../
 
+  fluent_ui:
+    git:
+      url: https://github.com/ganeshrvel/fluent_ui.git
+      ref: openmtp
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

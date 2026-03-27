@@ -53,6 +53,8 @@ class TabsAreaThemeData {
 
   double get minimalFinalGap => _minimalFinalGap;
 
+  double? tabWidth;
+
   set minimalFinalGap(double value) {
     _minimalFinalGap = value >= 0 ? value : 0;
   }

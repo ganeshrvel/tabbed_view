@@ -1,8 +1,9 @@
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
 import 'package:tabbed_view/src/internal/tabbed_view_provider.dart';
 import 'package:tabbed_view/src/tab_button.dart';
 import 'package:tabbed_view/src/tabbed_view_menu_item.dart';
+import 'package:fluent_ui/fluent_ui.dart' show Tooltip, TooltipThemeData;
+import 'package:flutter/material.dart' hide Tooltip, TooltipThemeData;
 
 /// Widget for tab buttons. Used for any tab button such as the close button.
 class TabButtonWidget extends StatefulWidget {
@@ -101,12 +102,15 @@ class TabButtonWidgetState extends State<TabButtonWidget> {
     if (widget.button.toolTip != null) {
       icon = Tooltip(
           message: widget.button.toolTip!,
-          child: icon,
-          waitDuration: Duration(milliseconds: 500));
+          style: const TooltipThemeData(
+            waitDuration: Duration(milliseconds: 500),
+            preferBelow: true,
+          ),
+          child: icon);
     }
 
     return MouseRegion(
-        cursor: SystemMouseCursors.click,
+        cursor: MouseCursor.defer,
         onEnter: _onEnter,
         onExit: _onExit,
         child: GestureDetector(child: icon, onTap: onPressed));

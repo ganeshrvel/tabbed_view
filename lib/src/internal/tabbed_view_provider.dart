@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 import 'package:tabbed_view/src/tabbed_view.dart';
@@ -27,7 +28,8 @@ class TabbedViewProvider {
       required this.draggingTabIndex,
       required this.onDraggableBuild,
       required this.canDrop,
-      required this.onBeforeDropAccept});
+      required this.onBeforeDropAccept,
+      this.anyDragActive});
 
   final TabbedViewController controller;
   final bool contentClip;
@@ -46,6 +48,7 @@ class TabbedViewProvider {
   final OnDraggableBuild? onDraggableBuild;
   final CanDrop? canDrop;
   final OnBeforeDropAccept? onBeforeDropAccept;
+  final ValueListenable<bool>? anyDragActive;
 }
 
 /// Updater for menu items

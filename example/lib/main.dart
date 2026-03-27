@@ -1,8 +1,10 @@
-import 'package:flutter/material.dart';
+import 'package:fluent_ui/fluent_ui.dart' hide TabData;
+import 'package:flutter/material.dart'
+    show Scaffold, TextField, InputDecoration, OutlineInputBorder, Icons;
 import 'package:tabbed_view/tabbed_view.dart';
 
 void main() {
-  runApp(TabbedViewExample());
+  runApp(const TabbedViewExample());
 }
 
 class TabbedViewExample extends StatelessWidget {
@@ -10,8 +12,10 @@ class TabbedViewExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false, home: TabbedViewExamplePage());
+    return FluentApp(
+      debugShowCheckedModeBanner: false,
+      home: const TabbedViewExamplePage(),
+    );
   }
 }
 
@@ -32,19 +36,20 @@ class TabbedViewExamplePageState extends State<TabbedViewExamplePage> {
 
     tabs.add(TabData(
         text: 'Tab 1',
-        leading: (context, status) => Icon(Icons.star, size: 16),
-        content: Padding(padding: EdgeInsets.all(8), child: Text('Hello'))));
+        leading: (context, status) => const Icon(Icons.star, size: 16),
+        content:
+            const Padding(padding: EdgeInsets.all(8), child: Text('Hello'))));
     tabs.add(TabData(
         text: 'Tab 2',
-        content:
-            Padding(padding: EdgeInsets.all(8), child: Text('Hello again'))));
+        content: const Padding(
+            padding: EdgeInsets.all(8), child: Text('Hello again'))));
     tabs.add(TabData(
         closable: false,
         text: 'TextField',
         content: Padding(
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             child: TextField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                     isDense: true, border: OutlineInputBorder()))),
         keepAlive: true));
 
@@ -53,9 +58,10 @@ class TabbedViewExamplePageState extends State<TabbedViewExamplePage> {
 
   @override
   Widget build(BuildContext context) {
-    TabbedView tabbedView = TabbedView(controller: _controller);
-    Widget w =
+    final TabbedView tabbedView = TabbedView(controller: _controller);
+    final Widget w =
         TabbedViewTheme(data: TabbedViewThemeData.mobile(), child: tabbedView);
-    return Scaffold(body: Container(padding: EdgeInsets.all(32), child: w));
+    return Scaffold(
+        body: Container(padding: const EdgeInsets.all(32), child: w));
   }
 }
