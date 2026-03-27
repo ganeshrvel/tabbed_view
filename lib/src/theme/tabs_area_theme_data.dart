@@ -28,7 +28,8 @@ class TabsAreaThemeData {
       this.hoverButtonBackground,
       this.disabledButtonBackground,
       IconProvider? menuIcon,
-      this.dropColor = const Color.fromARGB(150, 0, 0, 0)})
+        this.dropColor = const Color.fromARGB(150, 0, 0, 0),
+        this.navIconColor = Colors.black})
       : this._minimalFinalGap = minimalFinalGap >= 0 ? minimalFinalGap : 0,
         this._buttonsOffset = buttonsOffset >= 0 ? buttonsOffset : 0,
         this._buttonsGap = buttonsGap >= 0 ? buttonsGap : 0,
@@ -39,7 +40,7 @@ class TabsAreaThemeData {
             : menuIcon;
 
   bool visible;
-
+  Color navIconColor;
   Color? color;
   Border? border;
   double initialGap;
@@ -114,6 +115,7 @@ class TabsAreaThemeData {
           disabledButtonBackground == other.disabledButtonBackground &&
           menuIcon == other.menuIcon &&
           _buttonsGap == other._buttonsGap &&
+          navIconColor == other.navIconColor &&
           _buttonsOffset == other._buttonsOffset &&
           buttonPadding == other.buttonPadding;
 
@@ -140,6 +142,7 @@ class TabsAreaThemeData {
       menuIcon.hashCode ^
       _buttonsGap.hashCode ^
       _buttonsOffset.hashCode ^
+      navIconColor.hashCode ^
       buttonPadding.hashCode;
 
   double get buttonsOffset => _buttonsOffset;

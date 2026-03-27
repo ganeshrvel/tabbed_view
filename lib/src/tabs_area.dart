@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart' show Icons;
 import 'package:tabbed_view/src/internal/tabbed_view_provider.dart';
 import 'package:tabbed_view/src/internal/tabs_area/drop_tab_widget.dart';
 import 'package:tabbed_view/src/internal/tabs_area/hidden_tabs.dart';
@@ -60,7 +61,7 @@ class _InfoButton extends StatelessWidget {
           child: Icon(
             CupertinoIcons.info,
             size: TabbedViewThemeConstants.infoIconSize,
-            color: FluentTheme.of(context).resources.textFillColorTertiary,
+            color: TabbedViewTheme.of(context).tabsArea.navIconColor,
           ),
         ),
       ),
@@ -116,12 +117,20 @@ class _ArrowButtonState extends State<_ArrowButton> {
             child: SizedBox(
               width: TabbedViewThemeConstants.arrowCircleSize,
               height: TabbedViewThemeConstants.arrowCircleSize,
-              child: Icon(
-                widget.left
-                    ? CupertinoIcons.chevron_left_circle
-                    : CupertinoIcons.chevron_right_circle,
-                size: TabbedViewThemeConstants.arrowIconSize,
-                color: iconColor,
+              child: Center(
+                child: Container(
+                  width: TabbedViewThemeConstants.arrowCircleSize - 4,
+                  height: TabbedViewThemeConstants.arrowCircleSize - 4,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: widget.normalColor.withValues(alpha: 0.08),
+                  ),
+                  child: Icon(
+                    widget.left ? Icons.chevron_left : Icons.chevron_right,
+                    size: TabbedViewThemeConstants.arrowIconSize,
+                    color: iconColor,
+                  ),
+                ),
               ),
             ),
           ),
@@ -281,8 +290,7 @@ class _TabsAreaState extends State<TabsArea> {
               onTap: () => _scrollBy(left
                   ? -TabbedViewThemeConstants.arrowScrollDelta
                   : TabbedViewThemeConstants.arrowScrollDelta),
-              normalColor:
-                  TabbedViewTheme.of(context).tabsArea.normalButtonColor,
+              normalColor: TabbedViewTheme.of(context).tabsArea.navIconColor,
               hoverColor: FluentTheme.of(context)
                   .accentColor
                   .defaultBrushFor(FluentTheme.of(context).brightness),
