@@ -122,6 +122,12 @@ class TabWidget extends StatelessWidget {
             dragAnchorStrategy: draggableConfig.dragAnchorStrategy,
             onDragStarted: () {
               provider.onTabDrag(index);
+              // shift focus and selection to the dragged tab immediately
+              // so the focused highlight follows the drag from the start
+              if (provider.onTabTap != null) {
+                provider.onTabTap!(index);
+              }
+              provider.controller.selectedIndex = index;
               if (draggableConfig.onDragStarted != null) {
                 draggableConfig.onDragStarted!();
               }
@@ -297,6 +303,10 @@ class TabWidget extends StatelessWidget {
   }
 
   void _onSelect(BuildContext context, int newTabIndex) {
+    // fires unconditionally on every tap — used for global focus
+    if (provider.onTabTap != null) {
+      provider.onTabTap!(newTabIndex);
+    }
     if (provider.tabSelectInterceptor == null ||
         provider.tabSelectInterceptor!(newTabIndex)) {
       provider.controller.selectedIndex = newTabIndex;

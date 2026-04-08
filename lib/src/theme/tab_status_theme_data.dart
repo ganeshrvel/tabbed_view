@@ -79,4 +79,39 @@ class TabStatusThemeData {
       normalButtonBackground.hashCode ^
       hoverButtonBackground.hashCode ^
       disabledButtonBackground.hashCode;
+
+  TabStatusThemeData copyWith({
+    BoxDecoration? decoration,
+    BorderSide? innerTopBorder,
+    BorderSide? innerBottomBorder,
+    Color? fontColor,
+    EdgeInsetsGeometry? padding,
+    EdgeInsetsGeometry? paddingWithoutButton,
+    EdgeInsetsGeometry? margin,
+    Color? normalButtonColor,
+    Color? hoverButtonColor,
+    Color? disabledButtonColor,
+    BoxDecoration? normalButtonBackground,
+    BoxDecoration? hoverButtonBackground,
+    BoxDecoration? disabledButtonBackground,
+  }) {
+    return TabStatusThemeData(
+      decoration: decoration ?? this.decoration,
+      innerTopBorder: innerTopBorder ?? this.innerTopBorder,
+      innerBottomBorder: innerBottomBorder ?? this.innerBottomBorder,
+      fontColor: fontColor ?? this.fontColor,
+      padding: padding ?? this.padding,
+      paddingWithoutButton: paddingWithoutButton ?? this.paddingWithoutButton,
+      margin: margin ?? this.margin,
+      normalButtonColor: normalButtonColor ?? this.normalButtonColor,
+      hoverButtonColor: hoverButtonColor ?? this.hoverButtonColor,
+      disabledButtonColor: disabledButtonColor ?? this.disabledButtonColor,
+      normalButtonBackground:
+          normalButtonBackground ?? this.normalButtonBackground,
+      hoverButtonBackground:
+          hoverButtonBackground ?? this.hoverButtonBackground,
+      disabledButtonBackground:
+          disabledButtonBackground ?? this.disabledButtonBackground,
+    );
+  }
 }

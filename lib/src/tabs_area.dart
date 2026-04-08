@@ -354,10 +354,9 @@ class _TabsAreaState extends State<TabsArea> {
                     : event.scrollDelta.dx;
                 if (_scrollController.hasClients &&
                     _scrollController.position.hasContentDimensions) {
-                  _scrollController.jumpTo(
-                    (_scrollController.offset + delta)
-                        .clamp(0.0, _scrollController.position.maxScrollExtent),
-                  );
+                  final newOffset = (_scrollController.offset + delta)
+                      .clamp(0.0, _scrollController.position.maxScrollExtent);
+                  _scrollController.jumpTo(newOffset);
                 }
               }
             },

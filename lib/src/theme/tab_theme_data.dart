@@ -172,4 +172,59 @@ class TabThemeData {
       _buttonsOffset.hashCode ^
       buttonPadding.hashCode ^
       _buttonsGap.hashCode;
+
+  TabThemeData copyWith({
+    IconProvider? closeIcon,
+    Color? normalButtonColor,
+    Color? hoverButtonColor,
+    Color? disabledButtonColor,
+    BoxDecoration? normalButtonBackground,
+    BoxDecoration? hoverButtonBackground,
+    BoxDecoration? disabledButtonBackground,
+    double? buttonIconSize,
+    VerticalAlignment? verticalAlignment,
+    double? buttonsOffset,
+    EdgeInsetsGeometry? buttonPadding,
+    double? buttonsGap,
+    BoxDecoration? decoration,
+    BoxDecoration? draggingDecoration,
+    double? draggingOpacity,
+    BorderSide? innerBottomBorder,
+    BorderSide? innerTopBorder,
+    TextStyle? textStyle,
+    EdgeInsetsGeometry? padding,
+    EdgeInsetsGeometry? paddingWithoutButton,
+    EdgeInsetsGeometry? margin,
+    TabStatusThemeData? selectedStatus,
+    TabStatusThemeData? highlightedStatus,
+  }) {
+    return TabThemeData(
+      closeIcon: closeIcon ?? this.closeIcon,
+      normalButtonColor: normalButtonColor ?? this.normalButtonColor,
+      hoverButtonColor: hoverButtonColor ?? this.hoverButtonColor,
+      disabledButtonColor: disabledButtonColor ?? this.disabledButtonColor,
+      normalButtonBackground:
+          normalButtonBackground ?? this.normalButtonBackground,
+      hoverButtonBackground:
+          hoverButtonBackground ?? this.hoverButtonBackground,
+      disabledButtonBackground:
+          disabledButtonBackground ?? this.disabledButtonBackground,
+      buttonIconSize: buttonIconSize ?? this.buttonIconSize,
+      verticalAlignment: verticalAlignment ?? this.verticalAlignment,
+      buttonsOffset: buttonsOffset ?? this.buttonsOffset,
+      buttonPadding: buttonPadding ?? this.buttonPadding,
+      buttonsGap: buttonsGap ?? this.buttonsGap,
+      decoration: decoration ?? this.decoration,
+      draggingDecoration: draggingDecoration ?? this.draggingDecoration,
+      draggingOpacity: draggingOpacity ?? this.draggingOpacity,
+      innerBottomBorder: innerBottomBorder ?? this.innerBottomBorder,
+      innerTopBorder: innerTopBorder ?? this.innerTopBorder,
+      textStyle: textStyle ?? this.textStyle,
+      padding: padding ?? this.padding,
+      paddingWithoutButton: paddingWithoutButton ?? this.paddingWithoutButton,
+      margin: margin ?? this.margin,
+      selectedStatus: selectedStatus ?? this.selectedStatus,
+      highlightedStatus: highlightedStatus ?? this.highlightedStatus,
+    );
+  }
 }

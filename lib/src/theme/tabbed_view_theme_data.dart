@@ -13,15 +13,14 @@ import 'package:tabbed_view/src/theme/tabs_area_theme_data.dart';
 /// The [TabbedView] theme.
 /// Defines the configuration of the overall visual [Theme] for a widget subtree within the app.
 class TabbedViewThemeData {
-  TabbedViewThemeData(
-      {TabsAreaThemeData? tabsArea,
-      TabThemeData? tab,
-      ContentAreaThemeData? contentArea,
-      TabbedViewMenuThemeData? menu})
+  TabbedViewThemeData({TabsAreaThemeData? tabsArea,
+    TabThemeData? tab,
+    ContentAreaThemeData? contentArea,
+    TabbedViewMenuThemeData? menu})
       : this.tab = tab != null ? tab : TabThemeData(),
         this.tabsArea = tabsArea != null ? tabsArea : TabsAreaThemeData(),
         this.contentArea =
-            contentArea != null ? contentArea : ContentAreaThemeData(),
+        contentArea != null ? contentArea : ContentAreaThemeData(),
         this.menu = menu != null ? menu : TabbedViewMenuThemeData();
 
   TabsAreaThemeData tabsArea;
@@ -42,19 +41,17 @@ class TabbedViewThemeData {
   }
 
   /// Builds the predefined classic theme.
-  factory TabbedViewThemeData.classic(
-      {MaterialColor colorSet = Colors.grey,
-      double fontSize = 13,
-      Color borderColor = Colors.black}) {
+  factory TabbedViewThemeData.classic({MaterialColor colorSet = Colors.grey,
+    double fontSize = 13,
+    Color borderColor = Colors.black}) {
     return ClassicTheme.build(
         colorSet: colorSet, fontSize: fontSize, borderColor: borderColor);
   }
 
   /// Builds the predefined mobile theme.
-  factory TabbedViewThemeData.mobile(
-      {MaterialColor colorSet = Colors.grey,
-      Color accentColor = Colors.blue,
-      double fontSize = 13}) {
+  factory TabbedViewThemeData.mobile({MaterialColor colorSet = Colors.grey,
+    Color accentColor = Colors.blue,
+    double fontSize = 13}) {
     return MobileTheme.build(
         colorSet: colorSet, accentColor: accentColor, fontSize: fontSize);
   }
@@ -68,14 +65,28 @@ class TabbedViewThemeData {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is TabbedViewThemeData &&
-          runtimeType == other.runtimeType &&
-          tabsArea == other.tabsArea &&
-          tab == other.tab &&
-          contentArea == other.contentArea &&
-          menu == other.menu;
+          other is TabbedViewThemeData &&
+              runtimeType == other.runtimeType &&
+              tabsArea == other.tabsArea &&
+              tab == other.tab &&
+              contentArea == other.contentArea &&
+              menu == other.menu;
 
   @override
   int get hashCode =>
       tabsArea.hashCode ^ tab.hashCode ^ contentArea.hashCode ^ menu.hashCode;
+
+  TabbedViewThemeData copyWith({
+    TabsAreaThemeData? tabsArea,
+    TabThemeData? tab,
+    ContentAreaThemeData? contentArea,
+    TabbedViewMenuThemeData? menu,
+  }) {
+    return TabbedViewThemeData(
+      tabsArea: tabsArea ?? this.tabsArea,
+      tab: tab ?? this.tab,
+      contentArea: contentArea ?? this.contentArea,
+      menu: menu ?? this.menu,
+    );
+  }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:meta/meta.dart';
 import 'package:tabbed_view/src/tabbed_view.dart';
 import 'package:tabbed_view/src/tabbed_view_controller.dart';
 import 'package:tabbed_view/src/tabbed_view_menu_item.dart';
@@ -18,6 +17,7 @@ class TabbedViewProvider {
       this.tabCloseInterceptor,
       required this.contentClip,
       this.onTabSelection,
+      this.onTabTap,
       this.tabSelectInterceptor,
       required this.selectToEnableButtons,
       this.closeButtonTooltip,
@@ -37,6 +37,11 @@ class TabbedViewProvider {
   final OnTabClose? onTabClose;
   final TabCloseInterceptor? tabCloseInterceptor;
   final OnTabSelection? onTabSelection;
+
+  /// Fires on every tab tap regardless of whether selection changed.
+  /// Used to update global focus even when the tab is already selected.
+  final OnTabSelection? onTabTap;
+
   final TabSelectInterceptor? tabSelectInterceptor;
   final bool selectToEnableButtons;
   final String? closeButtonTooltip;

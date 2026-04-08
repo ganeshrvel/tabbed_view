@@ -46,6 +46,7 @@ class TabbedView extends StatefulWidget {
       this.onTabClose,
       this.tabCloseInterceptor,
       this.onTabSelection,
+      this.onTabTap,
       this.tabSelectInterceptor,
       this.selectToEnableButtons = true,
       this.contentClip = true,
@@ -63,6 +64,10 @@ class TabbedView extends StatefulWidget {
   final OnTabClose? onTabClose;
   final TabCloseInterceptor? tabCloseInterceptor;
   final OnTabSelection? onTabSelection;
+
+  /// Fires on every tab tap regardless of whether selection changed.
+  final OnTabSelection? onTabTap;
+
   final TabSelectInterceptor? tabSelectInterceptor;
   final bool selectToEnableButtons;
   final String? closeButtonTooltip;
@@ -110,6 +115,7 @@ class _TabbedViewState extends State<TabbedView> {
         onTabClose: widget.onTabClose,
         tabCloseInterceptor: widget.tabCloseInterceptor,
         onTabSelection: widget.onTabSelection,
+        onTabTap: widget.onTabTap,
         contentClip: widget.contentClip,
         tabSelectInterceptor: widget.tabSelectInterceptor,
         selectToEnableButtons: widget.selectToEnableButtons,
