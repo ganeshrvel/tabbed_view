@@ -169,10 +169,15 @@ class TabbedViewController extends ChangeNotifier {
     _updateIndexes(false);
     if (_tabs.isEmpty) {
       _selectedIndex = null;
-    } else if (_selectedIndex != null &&
-        (_selectedIndex == tabIndex || _selectedIndex! >= _tabs.length)) {
-      // select nearest left tab, fall back to right if no left exists
-      _selectedIndex = (tabIndex > 0 ? tabIndex - 1 : 0);
+    } else if (_selectedIndex != null) {
+      if (_selectedIndex == tabIndex) {
+        // closed tab was selected — move to previous sibling, fall back to next
+        _selectedIndex =
+            (tabIndex > 0 ? tabIndex - 1 : 0).clamp(0, _tabs.length - 1);
+      } else if (tabIndex < _selectedIndex!) {
+        // closed tab was before selected — shift index down by one to keep
+        // the same tab selected
+      }
     }
     notifyListeners();
     return tabData;

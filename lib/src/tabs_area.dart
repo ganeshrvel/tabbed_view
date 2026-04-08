@@ -15,6 +15,7 @@ import 'package:tabbed_view/src/theme/tabs_area_theme_data.dart';
 import 'package:tabbed_view/src/theme/theme_widget.dart';
 import 'package:fluent_ui/fluent_ui.dart'
     show FluentTheme, Tooltip, TooltipThemeData;
+import 'package:tabbed_view/tabbed_view.dart' show TabData;
 
 /// Widget for the tabs and buttons.
 class TabsArea extends StatefulWidget {
@@ -146,13 +147,13 @@ class _TabsAreaState extends State<TabsArea> {
   final HiddenTabs _hiddenTabs = HiddenTabs();
   final ScrollController _scrollController = ScrollController();
   int _lastTabCount = 0;
-  int? _lastSelectedIndex;
+  TabData? _lastSelectedTab;
 
   @override
   void initState() {
     super.initState();
     _lastTabCount = widget.provider.controller.tabs.length;
-    _lastSelectedIndex = widget.provider.controller.selectedIndex;
+    _lastSelectedTab = widget.provider.controller.selectedTab;
     widget.provider.anyDragActive?.addListener(_onAnyDragActiveChanged);
   }
 
@@ -172,19 +173,15 @@ class _TabsAreaState extends State<TabsArea> {
     }
     final controller = widget.provider.controller;
     final int tabCount = controller.tabs.length;
-    final int? selectedIndex = controller.selectedIndex;
+    final TabData? selectedTab = controller.selectedTab;
 
-    if (tabCount > _lastTabCount) {
+    if (tabCount > _lastTabCount || !identical(selectedTab, _lastSelectedTab)) {
       _lastTabCount = tabCount;
-      _lastSelectedIndex = selectedIndex;
-      _scrollToSelected();
-    } else if (selectedIndex != _lastSelectedIndex) {
-      _lastTabCount = tabCount;
-      _lastSelectedIndex = selectedIndex;
+      _lastSelectedTab = selectedTab;
       _scrollToSelected();
     } else {
       _lastTabCount = tabCount;
-      _lastSelectedIndex = selectedIndex;
+      _lastSelectedTab = selectedTab;
     }
   }
 
@@ -413,6 +410,5 @@ class _TabsAreaState extends State<TabsArea> {
     setState(() {
       _highlightedIndex = null;
     });
-    _scrollToSelected();
   }
 }
