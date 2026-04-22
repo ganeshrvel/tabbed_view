@@ -288,9 +288,7 @@ class _TabsAreaState extends State<TabsArea> {
                   ? -TabbedViewThemeConstants.arrowScrollDelta
                   : TabbedViewThemeConstants.arrowScrollDelta),
               normalColor: TabbedViewTheme.of(context).tabsArea.navIconColor,
-              hoverColor: FluentTheme.of(context)
-                  .accentColor
-                  .defaultBrushFor(FluentTheme.of(context).brightness),
+              hoverColor: FluentTheme.of(context).accentColor.lighter,
             ),
           ),
         );
